@@ -1,6 +1,7 @@
 "use client"
 
 import { LoginAction } from "./actions";
+import { signIn } from "next-auth/react"
 import { useState, useEffect } from "react";
 
 export default function Login() {
@@ -9,17 +10,15 @@ export default function Login() {
 
     async function handleLogin(formData: FormData) {
         setErrorMessage("");
-        try {
-             
-            const res = await LoginAction(formData);
-            if (!res.success)  {
-                 setErrorMessage(res.error || "Login failed");
-            }
+        const username = formData.get("username");
+        const password = formData.get("password");
 
-            // Redirect or show success message
-        } catch (error) {
-            setErrorMessage("An error occurred. Please try again.");
-        }
+        const res = await signIn("credentials", {
+            redirect: false,
+            username: username,
+            password: password,
+        });
+       
     }
 
     useEffect(() => {
@@ -33,12 +32,22 @@ export default function Login() {
 
         <div className="min-h-screen flex items-center justify-center bg-gray-900">
             <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+
+                <div className="flex justify-center mb-8">
+                    <img
+                        src="/logo.png"
+                        alt="Oasis Logo"
+                        className="h-20 w-auto drop-shadow-lg rounded"
+                        draggable={false}
+                    />
+                </div>
+
                 {errorMessage && (
                     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-600 bg-opacity-90 text-white px-6 py-3 rounded shadow-lg transition-all">
                         {errorMessage}
                     </div>
                 )}
-                <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+                
                 <form action={handleLogin} className="space-y-6">
                     <div>
                         <label htmlFor="username" className="block text-sm font-medium text-gray-700">
