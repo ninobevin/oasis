@@ -7,18 +7,41 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import Image from "next/image"
 import SurveyInfo from "./survey-info"
-
+import SurveyData from "./survey-data"
 
 
 
 
 export default function Survey() {
+
+    type patientInfo = {
+        date: string;
+        visitType: string;
+        provider: string;
+    }
+
+    const [patient, setPatient] = useState<patientInfo>({
+        date: "",
+        visitType: "",
+        provider: "",
+    });
+
+    const handleUpdatePatient = (updated: patientInfo) => {
+            setPatient(updated);
+    };
+
     return (
-        
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
-            <SurveyInfo />
-        </div>
-    
+       
+            <div className="flex justify-center bg-gray-100 items-center min-h-screen">
+             
+                {patient.date && patient.visitType && patient.provider ? (
+                    <SurveyData  patient={patient} />
+                ) : (
+                    <SurveyInfo onUpdate={handleUpdatePatient} patient={patient} />
+                )}
+            </div>
     )
+
+    
 
 }
