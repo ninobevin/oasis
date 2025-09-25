@@ -4,6 +4,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaSmile, FaMeh, FaFrown } from "react-icons/fa";
+import SignaturePad from "@/components/signature_pad";
+import FullScreenSignature from "@/components/signature_pad";
 
 const questions = [
     "Booking of your appointment with call center",
@@ -30,6 +32,7 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
     const [answers, setAnswers] = useState<{ [key: number]: string }>({});
     const [comments, setComments] = useState("");
 
+
     const handleAnswer = (value: string) => {
         setAnswers({ ...answers, [current]: value });
     };
@@ -50,6 +53,11 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
             <CardContent>
                 <form onSubmit={handleSubmit}>
                     <label>How satisfied were you with: </label>
+                  
+
+{/* Optionally show the saved signature */}
+
+
                     <div className="relative overflow-hidden h-64 flex items-center justify-center">
                         
                         {/* Carousel Slides */}
@@ -121,6 +129,9 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
                                 onChange={(e) => setComments(e.target.value)}
                                 className="mb-4"
                             />
+
+                           
+
                             <div className="flex gap-2 mt-4">
                                 <Button type="button" variant="outline" onClick={handlePrev}>
                                     Previous

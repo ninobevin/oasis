@@ -8,12 +8,14 @@ import { Textarea } from "@/components/ui/textarea"
 import Image from "next/image"
 import SurveyInfo from "./survey-info"
 import SurveyData from "./survey-data"
+import FullScreenSignature from "@/components/signature_pad"
 
 
 
 
 export default function Survey() {
 
+ const [signature, setSignature] = useState<string | null>(null);
     type patientInfo = {
         date: string;
         visitType: string;
@@ -43,7 +45,11 @@ export default function Survey() {
                 {patient.date && patient.visitType && patient.provider ? (
                     <SurveyData patient={patient} />
                 ) : (
-                    <SurveyInfo onUpdate={handleUpdatePatient} patient={patient} />
+                  
+                     <SurveyInfo onUpdate={handleUpdatePatient} patient={patient} />
+                  
+                   
+                    
                 )}
             </div>
         </div>
