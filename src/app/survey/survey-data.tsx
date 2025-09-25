@@ -49,7 +49,9 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit}>
+                    <label>How satisfied were you with: </label>
                     <div className="relative overflow-hidden h-64 flex items-center justify-center">
+                        
                         {/* Carousel Slides */}
                         {questions.map((q, idx) => (
                             <div
@@ -83,7 +85,7 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
                                         <span>Poor</span>
                                     </label>
                                 </RadioGroup>
-                                <div className="flex gap-2 mt-4">
+                                <div className="flex gap-2 mt-8">
                                     <Button
                                         type="button"
                                         variant="outline"
@@ -119,7 +121,7 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
                                 onChange={(e) => setComments(e.target.value)}
                                 className="mb-4"
                             />
-                            <div className="flex gap-2 mt-2">
+                            <div className="flex gap-2 mt-4">
                                 <Button type="button" variant="outline" onClick={handlePrev}>
                                     Previous
                                 </Button>

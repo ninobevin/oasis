@@ -27,21 +27,29 @@ export default function Survey() {
     });
 
     const handleUpdatePatient = (updated: patientInfo) => {
-            setPatient(updated);
+        setPatient(updated);
     };
-
     return (
-       
-            <div className="flex justify-center bg-gray-100 items-center min-h-screen">
-             
+        <div
+            className="relative flex flex-col justify-center items-center min-h-screen
+               before:absolute before:inset-0 before:bg-black/50 before:z-0"
+            style={{
+                backgroundImage: "url('/images/doctors/background.jpg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+            }}
+        >
+            <div className="relative w-full z-10">
                 {patient.date && patient.visitType && patient.provider ? (
-                    <SurveyData  patient={patient} />
+                    <SurveyData patient={patient} />
                 ) : (
                     <SurveyInfo onUpdate={handleUpdatePatient} patient={patient} />
                 )}
             </div>
-    )
+        </div>
+    );
 
-    
+
+
 
 }
