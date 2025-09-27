@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.1
+    container_name: dental_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: dental_clinic
+      MYSQL_USER: clinic_user
+      MYSQL_PASSWORD: clinic_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql 
