@@ -52,7 +52,7 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit}>
-                    <label>How satisfied were you with: </label>
+                   {current === questions.length - 1 && <label>How satisfied were you with: </label>}
                   
 
 {/* Optionally show the saved signature */}
