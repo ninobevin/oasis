@@ -20,16 +20,25 @@ export default function Survey() {
         date: string;
         visitType: string;
         provider: string;
+        patientName?: string;
     }
 
     const [patient, setPatient] = useState<patientInfo>({
         date: "",
         visitType: "",
         provider: "",
+        patientName: ""
     });
 
     const handleUpdatePatient = (updated: patientInfo) => {
-        setPatient(updated);
+        setPatient({
+            date: updated.date,
+            visitType: updated.visitType,
+            provider: updated.provider,
+            patientName: updated.patientName
+        });
+
+      //console.log("Updated patient info:", updated);
     };
     return (
         <div
@@ -42,14 +51,10 @@ export default function Survey() {
             }}
         >
             <div className="relative w-full z-10">
-                {patient.date && patient.visitType && patient.provider ? (
+                {patient.date ? (
                     <SurveyData patient={patient} />
                 ) : (
-                  
-                     <SurveyInfo onUpdate={handleUpdatePatient} patient={patient} />
-                  
-                   
-                    
+                    <SurveyInfo onUpdate={handleUpdatePatient} patient={patient} />
                 )}
             </div>
         </div>

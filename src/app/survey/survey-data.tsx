@@ -1,36 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaSmile, FaMeh, FaFrown } from "react-icons/fa";
-import SignaturePad from "@/components/signature_pad";
-import FullScreenSignature from "@/components/signature_pad";
+import { getQuestionaire , saveSurvey} from "./queryActions";
 
-const questions = [
-    "Booking of your appointment with call center",
-    "Scheduling appointments",
-    "Staff timeliness",
-    "Receiving appropriate dental treatment",
-    "Receiving treatment options",
-    "Dentist (courteous and professional)",
-    "Dental hygienist (courteous and professional)",
-    "Dental Assistant (courteous and professional)",
-    "Receptionist (courteous and professional)",
-    "Quality of dental care provided",
-    "Ability to ask questions",
-    "Receiving a follow up appointment",
-    "Confidentiality",
-    "Pain control",
-    "Receiving Parking Assistance",
-    "Facility Cleanliness",
-    "Overall experience with OBC"
-];
 
-export default function SurveyData({ patient }: { patient: { date: string; visitType: string; provider: string; } }) {
+
+
+export default function SurveyData({ patient }: { patient: { date: string; visitType: string; provider: string; patientName?: string; } }) {
     const [current, setCurrent] = useState(0);
     const [answers, setAnswers] = useState<{ [key: number]: string }>({});
     const [comments, setComments] = useState("");
+
 
 
     const handleAnswer = (value: string) => {
@@ -40,10 +23,28 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
     const handlePrev = () => setCurrent((c) => Math.max(0, c - 1));
     const handleNext = () => setCurrent((c) => Math.min(questions.length, c + 1));
 
+    const [questions, setQuestions] = useState<any[]>([]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         alert(JSON.stringify(answers));
     };
+
+    useEffect(() => {
+        // Fetch questions from the database or API if needed
+        const fetchQuestions = async () => {
+            const fetchedQuestions = await getQuestionaire();
+            setQuestions(fetchedQuestions);
+        };
+        fetchQuestions();
+    }, []);
+
+    function finishSurvey() {
+        // Here you can handle the final submission of the survey
+        const surveyData = { answers, comments , patient};
+
+        saveSurvey(surveyData);
+    }
 
     return (
         <Card className="max-w-xl mx-auto mt-8">
@@ -52,43 +53,47 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit}>
-                   {current === questions.length - 1 && <label>How satisfied were you with: </label>}
-                  
+                    <div className="flext flex-col mb-6">
+                        {<label className="mb-2">Hello {patient.patientName || "there"},</label>}
+                        <br />
+                        {current < questions.length - 1 && <label>How satisfied were you with: </label>}
+                    </div>
 
-{/* Optionally show the saved signature */}
+
+
+                    {/* Optionally show the saved signature */}
 
 
                     <div className="relative overflow-hidden h-64 flex items-center justify-center">
-                        
+
                         {/* Carousel Slides */}
                         {questions.map((q, idx) => (
                             <div
                                 key={idx}
-                                className={`absolute top-0 left-0 w-full transition-transform duration-500 ease-in-out ${
-                                    idx === current ? "translate-x-0 opacity-100 z-10" : "translate-x-full opacity-0 z-0"
-                                }`}
+                                className={`absolute top-0 left-0 w-full transition-transform duration-500 ease-in-out ${idx === current ? "translate-x-0 opacity-100 z-10" : "translate-x-full opacity-0 z-0"
+                                    }`}
                                 style={{ pointerEvents: idx === current ? "auto" : "none" }}
                             >
-                                <label className="font-medium block mb-4">{q}</label>
+                                <label className="font-medium block mb-4">{q.question}</label>
                                 <RadioGroup
-                                    value={answers[idx] || ""}
+                                    value={answers[q.id] || ""}
                                     onValueChange={(value) => {
-                                        setAnswers({ ...answers, [idx]: value });
+                                        setAnswers({ ...answers, [q.id]: value });
                                     }}
                                     className="flex gap-6 mb-4"
                                 >
                                     <label className="flex items-center gap-2 cursor-pointer">
-                                        <RadioGroupItem value="good" />
+                                        <RadioGroupItem value="3" />
                                         <FaSmile className="text-green-500" />
                                         <span>Good</span>
                                     </label>
                                     <label className="flex items-center gap-2 cursor-pointer">
-                                        <RadioGroupItem value="fair" />
+                                        <RadioGroupItem value="2" />
                                         <FaMeh className="text-yellow-500" />
                                         <span>Fair</span>
                                     </label>
                                     <label className="flex items-center gap-2 cursor-pointer">
-                                        <RadioGroupItem value="poor" />
+                                        <RadioGroupItem value="1" />
                                         <FaFrown className="text-red-500" />
                                         <span>Poor</span>
                                     </label>
@@ -105,7 +110,7 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
                                     <Button
                                         type="button"
                                         onClick={handleNext}
-                                        disabled={idx === questions.length || !answers[idx]}
+                                        disabled={idx === questions.length || !answers[q.id]}
                                     >
                                         Next
                                     </Button>
@@ -117,9 +122,8 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
                         ))}
                         {/* Comments Slide */}
                         <div
-                            className={`absolute top-0 left-0 w-full transition-transform duration-500 ease-in-out ${
-                                current === questions.length ? "translate-x-0 opacity-100 z-10" : "translate-x-full opacity-0 z-0"
-                            }`}
+                            className={`absolute top-0 left-0 w-full transition-transform duration-500 ease-in-out ${current === questions.length ? "translate-x-0 opacity-100 z-10" : "translate-x-full opacity-0 z-0"
+                                }`}
                             style={{ pointerEvents: current === questions.length ? "auto" : "none" }}
                         >
                             <label className="font-medium block mb-4">Compliments or Comments:</label>
@@ -130,13 +134,13 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
                                 className="mb-4"
                             />
 
-                           
+
 
                             <div className="flex gap-2 mt-4">
                                 <Button type="button" variant="outline" onClick={handlePrev}>
                                     Previous
                                 </Button>
-                                <Button type="submit" className="px-6">
+                                <Button type="submit" onClick={finishSurvey} className="px-6">
                                     Submit
                                 </Button>
                             </div>

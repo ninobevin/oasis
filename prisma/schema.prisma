@@ -16,7 +16,7 @@ datasource db {
 
 
 model User {
-  id        String   @id @default(cuid())
+  id        Int   @id @default(autoincrement())
   employee_id  String?   @unique 
   username  String   @unique
   password  String
@@ -25,14 +25,53 @@ model User {
 }
 
 model UserGroup {
-  id        String   @id @default(cuid())
+  id        Int   @id @default(autoincrement())
   name      String   @unique
   active    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
 
 model Group {
-  id        String   @id @default(cuid())
+  id        Int   @id @default(autoincrement())
   name      String   @unique
   createdAt DateTime @default(now())
+}
+
+model DoctorProvider {
+  id        Int   @id @default(autoincrement())
+  name      String
+  avatar    String 
+  specialty String?
+  active    Boolean  @default(true)
+}
+
+model SurveyQuestion {
+  id  Int   @id @default(autoincrement())
+  question  String
+  lang String @default("en")
+}
+
+model SurveyQuestionConfig {
+  questionId  Int   @id @default(autoincrement())
+  orderNumber    Int
+}
+
+
+
+model SurveyAnswer {
+  id  Int   @id @default(autoincrement())
+  surveyEntryId Int 
+  questionId Int
+  answer Int
+}
+
+/// visitType 0 for Walk in and 1 for Appointment
+
+model SurveyEntry {
+  id  Int   @id @default(autoincrement())
+  providerId Int
+  visitType Int
+  patientName String
+  createdAt DateTime @default(now())
+  comment String?
 }
