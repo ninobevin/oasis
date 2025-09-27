@@ -43,7 +43,7 @@ export default function SurveyInfo({ patient, onUpdate }: Props) {
     return (
         <Card className="max-w-xl mx-auto mt-8">
             <CardHeader>
-            <CardTitle></CardTitle>
+            <CardTitle>sss</CardTitle>
             </CardHeader>
             <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-7">
