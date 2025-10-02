@@ -4,12 +4,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaSmile, FaMeh, FaFrown } from "react-icons/fa";
-import { getQuestionaire , saveSurvey} from "./queryActions";
+import { getQuestionaire, saveSurvey } from "./queryActions";
 
 
 
 
-export default function SurveyData({ patient }: { patient: { date: string; visitType: string; provider: string; patientName?: string; } }) {
+export default function SurveyData({ patient, finishSurvey }: { patient: { date: string; visitType: string; provider: string; patientName?: string; }, finishSurvey: (show: boolean) => void }) {
     const [current, setCurrent] = useState(0);
     const [answers, setAnswers] = useState<{ [key: number]: string }>({});
     const [comments, setComments] = useState("");
@@ -27,7 +27,7 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        alert(JSON.stringify(answers));
+        // alert(JSON.stringify(answers));
     };
 
     useEffect(() => {
@@ -39,11 +39,38 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
         fetchQuestions();
     }, []);
 
-    function finishSurvey() {
+    async function submitSurvey() {
         // Here you can handle the final submission of the survey
-        const surveyData = { answers, comments , patient};
-
+        const surveyData = { answers, comments, patient };
         saveSurvey(surveyData);
+
+
+        if (comments.trim() !== "") {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    // Modern browsers
+                    await navigator.clipboard.writeText(comments);
+                    alert("Comment copied to clipboard!");
+                } else {
+                    // Fallback for iOS Safari / insecure contexts
+                    const textarea = document.createElement("textarea");
+                    textarea.value = comments;
+                    textarea.style.position = "fixed"; // prevent scroll jump
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(textarea);
+                    alert("Comment copied to clipboard!");
+                }
+            } catch (err) {
+                console.error("Failed to copy: ", err);
+                alert("Copy failed. Please copy manually.");
+            }
+        }
+
+        finishSurvey(true);
+
     }
 
     return (
@@ -58,8 +85,6 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
                         <br />
                         {current < questions.length - 1 && <label>How satisfied were you with: </label>}
                     </div>
-
-
 
                     {/* Optionally show the saved signature */}
 
@@ -140,7 +165,7 @@ export default function SurveyData({ patient }: { patient: { date: string; visit
                                 <Button type="button" variant="outline" onClick={handlePrev}>
                                     Previous
                                 </Button>
-                                <Button type="submit" onClick={finishSurvey} className="px-6">
+                                <Button type="submit" onClick={submitSurvey} className="px-6">
                                     Submit
                                 </Button>
                             </div>

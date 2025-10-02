@@ -18,7 +18,19 @@ export default function Login() {
             username: username,
             password: password,
         });
-       
+        if (res?.error) {
+            if (res.error === "CredentialsSignin") {
+                setErrorMessage("Invalid username or password");
+            } else if (res.error === "Internal Server Error") {
+                setErrorMessage("Something went wrong on our side. Please try again later.");
+            } else {
+                setErrorMessage(res.error); // fallback, shows custom error if you throw inside authorize()
+            }
+        } else {
+            // success → redirect
+            window.location.href = "/application";
+        }
+
     }
 
     useEffect(() => {
@@ -47,7 +59,7 @@ export default function Login() {
                         {errorMessage}
                     </div>
                 )}
-                
+
                 <form action={handleLogin} className="space-y-6">
                     <div>
                         <label htmlFor="username" className="block text-sm font-medium text-gray-700">

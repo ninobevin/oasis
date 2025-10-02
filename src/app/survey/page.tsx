@@ -4,11 +4,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import Image from "next/image"
 import SurveyInfo from "./survey-info"
 import SurveyData from "./survey-data"
-import FullScreenSignature from "@/components/signature_pad"
+import SurveySummary from "./survey-summary"
 
 
 
@@ -16,6 +14,7 @@ import FullScreenSignature from "@/components/signature_pad"
 export default function Survey() {
 
  const [signature, setSignature] = useState<string | null>(null);
+ const [showFinish, setShowFinish] = useState(false);
     type patientInfo = {
         date: string;
         visitType: string;
@@ -37,9 +36,14 @@ export default function Survey() {
             provider: updated.provider,
             patientName: updated.patientName
         });
-
       //console.log("Updated patient info:", updated);
     };
+
+   
+
+    const handleFinishSurvey = (show: boolean) => {
+        setShowFinish(show);
+    }
     return (
         <div
             className="relative flex flex-col justify-center items-center min-h-screen
@@ -51,8 +55,11 @@ export default function Survey() {
             }}
         >
             <div className="relative w-full z-10">
-                {patient.date ? (
-                    <SurveyData patient={patient} />
+              
+                {showFinish ? (
+                    <SurveySummary />
+                ) : patient.provider ? (
+                    <SurveyData patient={patient} finishSurvey={handleFinishSurvey} />
                 ) : (
                     <SurveyInfo onUpdate={handleUpdatePatient} patient={patient} />
                 )}

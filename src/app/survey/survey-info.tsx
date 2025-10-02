@@ -26,9 +26,11 @@ type Props = {
 import React, { useEffect, useState } from "react";
 
 export default function SurveyInfo({ patient, onUpdate }: Props) {
+
+     const today = new Date().toISOString().split("T")[0];
     const { handleSubmit, control, register, formState: { errors } } = useForm({
         defaultValues: {
-            date: patient.date,
+            date: today,
             visitType: patient.visitType,
             provider: patient.provider,
             patientName: patient.patientName || ''
@@ -48,6 +50,7 @@ export default function SurveyInfo({ patient, onUpdate }: Props) {
                 avatar: doc.avatar
             })));
         };
+
         fetchProviders();
     }, []);
 
